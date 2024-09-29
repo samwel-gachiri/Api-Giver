@@ -20,6 +20,33 @@ app.get('/key', authenticate, (req, res) => {
   res.status(200).send(apiKey);
 });
 
+app.post('/ussd', (req, res) => {
+  const { sessionId, serviceCode, phoneNumber, text } = req.body;
+
+  let response = '';
+
+  switch (text) {
+    case '':
+      response = 'CON Welcome to your service\n1. Check Balance\n2. Transfer Money';
+      break;
+    case '1':
+      response = 'END Your balance is KES 1,000';
+      break;
+    case '2':
+      response = 'CON Enter the amount to transfer:';
+      break;
+    default:
+      if (text.startsWith('2*')) {
+        const amount = text.split('*')[1];
+        response = `END You have transferred KES ${amount}`;
+      } else {
+        response = 'END Invalid option';
+      }
+      break;
+  }
+
+  res.send(response);
+});
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
