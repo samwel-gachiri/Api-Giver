@@ -20,6 +20,7 @@ app.get('/key', authenticate, (req, res) => {
   res.status(200).send(apiKey);
 });
 
+app.use(express.urlencoded({ extended: true }));
 app.post('/ussd', (req, res) => {
   const { sessionId, serviceCode, phoneNumber, text } = req.body;
 
@@ -45,6 +46,7 @@ app.post('/ussd', (req, res) => {
       break;
   }
 
+  res.set('Content-Type','text/plain');
   res.send(response);
 });
 const PORT = process.env.PORT || 3000;
